@@ -48,6 +48,7 @@ def read_file(filename, no_bins):
     # Open data file
     f = open(filename, "r")
     data_block = []
+    timestamps = []
     # Loop over file
     while True:
         # Read line
@@ -77,8 +78,9 @@ def read_file(filename, no_bins):
                 j_s[1] = float(j_s[1])
                 data_list.append(j_s)
             data_block.append(data_list)
+            timestamps.append(mid_time)
     f.close()
-    return np.array(data_block), mid_time
+    return np.array(data_block), timestamps
 
 
 def main(argv):
@@ -146,6 +148,7 @@ def main(argv):
 # Print info about the software
 def print_header():
     name = """
+###############################
  __  __  ___ _____   _  ___  
 |  \/  |/ _ \__  /  | |/ _ \ 
 | |\/| | | | |/ /_  | | | | |
