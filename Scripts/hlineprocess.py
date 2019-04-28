@@ -23,12 +23,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import butter, filtfilt
 import time, sys, getopt
+from datetime import datetime
 
 # Function to calculate a gradient to equalise the two vectors
 # y = m * x -> m is calculated iteratively
 def equalise_power(vec1, vec2):
     var = 1
-    stop = 0.00001
+    stop = 0.000001
     c = 2
     e = float("inf")
     while True:
@@ -56,7 +57,15 @@ def read_file(filename, no_bins):
         if x == "# rtl-power-fftw output\n":
             #print("Data Found")
             start_line = f.readline()
+            start_line = start_line.split(" ")
+            # # Acquisition start: 2019-04-21 10:48:42 UTC
+            start_time = datetime.strptime(start_line[3] + " " + start_line[4], "%Y-%m-%d %H:%M:%S")
+            
             end_line = f.readline()
+            end_line = end_line.split(" ")
+            # # Acquisition end: 2019-04-21 10:49:03 UTC
+            end_time = datetime.strptime(end_line[3] + " " + end_line[4], "%Y-%m-%d %H:%M:%S")
+            mid_time = (end_time - start_time)/2 + start_time
             empty_line = f.readline()
             units = f.readline()
             data_list = []
@@ -69,12 +78,11 @@ def read_file(filename, no_bins):
                 data_list.append(j_s)
             data_block.append(data_list)
     f.close()
-    return np.array(data_block)
+    return np.array(data_block), mid_time
 
 
 def main(argv):
     cf = 1420.40575e6 
-    
     
     # Load arguments
     try:
@@ -105,14 +113,15 @@ def main(argv):
     print("### fft_len is:", fft_len)
     
     # Load noise grid
-    noise = read_file(noisefile, fft_len)
+    noise, noise_measurement_time = read_file(noisefile, fft_len)
     # Discard f values
     noise_vector = noise[:,:,1]
     # Sum values
     noise_vector = np.sum(noise_vector, axis = 0)/noise_vector.shape[0]
     
     # Load antenna data
-    data_block = read_file(datafile, fft_len)
+    data_block, data_measurement_time = read_file(datafile, fft_len)
+    print(data_measurement_time) 
     
     # Iterate over data tracks
     for block in data_block:
@@ -131,7 +140,7 @@ def main(argv):
         plt.title("Hydrogen Line Measurement - 21/04/2019\nHawkhurst, UK")
         plt.xlabel("Frequency/Hz")
         plt.ylabel("Power Counts")  
-        plt.plot(block[:,0]/cf, plot_data)
+        plt.plot(block[:,0], plot_data)
         plt.show()
 
 # Print info about the software
