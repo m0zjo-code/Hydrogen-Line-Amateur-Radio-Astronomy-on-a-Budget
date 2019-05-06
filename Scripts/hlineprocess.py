@@ -30,11 +30,12 @@ from astropy.coordinates import SkyCoord, EarthLocation
 from astropy import units as u
 
 # Data output settings
-plot = False
+plot = True
 plot_noise = False
 export_fig = False
 calc_doppler = False
-calc_velocity = False
+calc_velocity = True
+plot_allsky = False
 
 # Rx location
 lat = 51
@@ -101,6 +102,30 @@ def read_file(filename, no_bins):
     f.close()
     return np.array(data_block), timestamps
 
+def pre_process(block, noise_vector, correction):
+    # Apply amplitude correction
+    plot_data = block[:,1] - noise_vector*correction
+    plot_data = np.square(plot_data)
+    return plot_data
+
+def plot_galatic_allsky(skycoordinate_list):
+    skycoordinate_list = np.array(skycoordinate_list)
+    
+    import healpy as hp
+    filename = "haslam408_dsds_Remazeilles2014.fits"
+    
+    if not os.path.isfile(filename):
+        import urllib.request
+        url = "http://www.jb.man.ac.uk/research/cosmos/haslam_map/%s" % filename
+        print("Beginning sky map data download... Downloading %s" % url)
+        urllib.request.urlretrieve(url, "haslam408_dsds_Remazeilles2014.fits")
+    
+    hpx = hp.read_map(filename)
+    hp.cartview(hpx, norm = "log", return_projected_map = False)
+    hp.projscatter(skycoordinate_list[:, 0], skycoordinate_list[:, 1], lonlat = True, color = 'red')
+    plt.show()
+    return
+
 def main(argv):
     # Load arguments
     help_line = "hlineprocess.py -d <datafile> -n <noisefile> -l <fft_len> -p <az,el>"
@@ -161,6 +186,10 @@ def main(argv):
     data_block, data_measurement_time = read_file(datafile, fft_len)
     print("### %i records found\n" % data_block.shape[0])
     
+    print("### Date + Time, Ra, Dec, Galactic Lon, Galactic Lat")
+    
+    skycoordinate_list = []
+    
     # Iterate over data tracks
     for i in range(0, data_block.shape[0]):
         # Extract data block
@@ -169,9 +198,7 @@ def main(argv):
         # Calculate correction
         correction = equalise_power(block[:,1], noise_vector)
         
-        # Apply amplitude correction
-        plot_data = block[:,1]- noise_vector*correction
-        plot_data = np.square(plot_data)
+        plot_data = pre_process(block, noise_vector, correction)
         
         # Generate time string
         time_str = data_measurement_time[i].strftime("%Y-%m-%d %H:%M:%S")
@@ -179,7 +206,6 @@ def main(argv):
         # Generate default plot labels
         xlabel = "Frequency/Hz"
         ylabel = "Power Counts"
-        plot_title = ("Hydrogen Line Measurement - %s\nHawkhurst, UK\nAz:%s El:%s" % (time_str, pointing[0], pointing[1]))
         
         # Perform Doppler calculations
         if calc_doppler:
@@ -194,10 +220,15 @@ def main(argv):
         az = float(pointing[1])*u.deg
         
         # Get block info
-        AltAzcoordiantes = SkyCoord(alt = alt, az = az, obstime = time_str, frame = 'altaz', location = home)
+        skycoordinate = SkyCoord(alt = alt, az = az, obstime = time_str, frame = 'altaz', location = home)
         
         # Display measurement info
-        print("### %s, %s, %s" % (time_str, AltAzcoordiantes.icrs.ra, AltAzcoordiantes.icrs.dec))
+        print("### %s, %s, %s, %s, %s" % (time_str, skycoordinate.icrs.ra.degree, skycoordinate.icrs.dec.degree, skycoordinate.galactic.l.degree, skycoordinate.galactic.b.degree))
+        
+        skycoordinate_list.append([skycoordinate.galactic.l.degree, skycoordinate.galactic.b.degree])
+        
+        # Generate Plot Title
+        plot_title = ("Hydrogen Line Measurement - %.2fMHz @ %s\nHawkhurst, UK | Az:%s El:%s | Gal Lat:%.2f Gal Lon:%.2f" % (h_cf*1e-6, time_str, pointing[0], pointing[1], skycoordinate.galactic.l.degree, skycoordinate.galactic.b.degree))
         
         # Display data
         if plot:
@@ -216,13 +247,18 @@ def main(argv):
         
         # Export figure to disk (PNG)
         if export_fig:
+            plt.figure(figsize=(10,10))
             plt.title(plot_title)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             plt.plot(block[:,0], plot_data)
             plt.savefig("%s/%s_%i.png" % (output_str, output_str, i), bbox_inches='tight')
             plt.close()
-        
+    
+    # Plot area on allsky map
+    if plot_allsky:
+        plot_galatic_allsky(skycoordinate_list)
+            
 # Print info about the software
 def print_header():
     name = """
