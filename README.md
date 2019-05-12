@@ -16,14 +16,14 @@ TL;DR, Neutral hydrogen emits a carrier at 1.420405GHz. We can use this to calcu
 
 ## The System
 
-![SystemDiagram](https://raw.githubusercontent.com/m0zjo-code/Hydrogen-Line-Amateur-Radio-Astronomy-on-a-Budget/master/docs/RadioTelescopeSystemDiagram.png)
+![SystemDiagram](/docs/RadioTelescopeSystemDiagram.png)
 
 
 ## Antenna Simulations and Design
-[Yagicad](http://www.yagicad.com/yagicad/YagiCAD.htm) was used to design a 1 meter yagi antenna that responded well at 1420 MHz. This antenna came out to have 16 elements and have the response below:![Antenna Pattern](https://github.com/m0zjo-code/Hydrogen-Line-Amateur-Radio-Astronomy-on-a-Budget/raw/master/AntennaV1Data/AntennaPattern.PNG)
-The antenna has the following physical layout as shown below and the element design parameters are shown [in this PDF](https://github.com/m0zjo-code/Hydrogen-Line-Amateur-Radio-Astronomy-on-a-Budget/blob/master/AntennaV1Data/CuOvereview.pdf). The YC6 (for use with YagiCad) file is available [here](https://github.com/m0zjo-code/Hydrogen-Line-Amateur-Radio-Astronomy-on-a-Budget/blob/master/AntennaV1Data/DL6WU20_HLINEV1Cu.YC6) if you would like to play with the design yourself.
+[Yagicad](http://www.yagicad.com/yagicad/YagiCAD.htm) was used to design a 1 meter yagi antenna that responded well at 1420 MHz. This antenna came out to have 16 elements and have the response below:![Antenna Pattern](/AntennaV1Data/AntennaPattern.PNG)
+The antenna has the following physical layout as shown below and the element design parameters are shown [in this PDF](/AntennaV1Data/CuOvereview.pdf). The YC6 (for use with YagiCad) file is available [here](/AntennaV1Data/DL6WU20_HLINEV1Cu.YC6) if you would like to play with the design yourself.
 
-![Antenna Physical Layout](https://github.com/m0zjo-code/Hydrogen-Line-Amateur-Radio-Astronomy-on-a-Budget/raw/master/AntennaV1Data/AntennaPlot.PNG)
+![Antenna Physical Layout](/AntennaV1Data/AntennaPlot.PNG)
 
 ## Filter Information
 The amplifier used in the initial test was the "VBFZ-1400-S+" from Mini-Circuits.
