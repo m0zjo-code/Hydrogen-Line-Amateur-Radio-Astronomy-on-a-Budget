@@ -27,7 +27,9 @@ The antenna has the following physical layout as shown below and the element des
 
 ## Filter Information
 The amplifier used in the initial test was the "VBFZ-1400-S+" from Mini-Circuits.
+
 Webpage: https://www.minicircuits.com/WebStore/dashboard.html?model=VBFZ-1400-S%2B
+
 Datasheet: https://ww2.minicircuits.com/pdfs/VBFZ-1400+.pdf
 
 This filter is a major cost in this project. In the future I hope to design a micro strip filter to provide a lower cost alternative.
