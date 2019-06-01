@@ -16,7 +16,6 @@ TL;DR, Neutral hydrogen emits a carrier at 1.420405GHz. We can use this to calcu
 
 ## The System
 
-Block diagram of the system:
 ![SystemDiagram](/docs/RadioTelescopeSystemDiagram.png)
 
 Photo of the system in action:
