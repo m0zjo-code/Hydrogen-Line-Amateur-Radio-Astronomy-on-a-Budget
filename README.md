@@ -15,6 +15,7 @@ https://en.wikipedia.org/wiki/Hydrogen_line
 TL;DR, Neutral hydrogen emits a carrier at 1.420405GHz. We can use this to calculate the relative velocity of galactic hydrogen clouds using the Doppler effect.  
 
 ## The System
+
 Block diagram of the system:
 ![SystemDiagram](/docs/RadioTelescopeSystemDiagram.png)
 
