@@ -19,7 +19,7 @@ Block diagram of the system:
 ![SystemDiagram](/docs/RadioTelescopeSystemDiagram.png)
 
 Photo of the system in action:
-![Full System Image](/docs/FullSystem.png)
+![Full System Image](/docs/FullSystem.jpg)
 
 ## Antenna Simulations and Design
 [Yagicad](http://www.yagicad.com/yagicad/YagiCAD.htm) was used to design a 1 meter yagi antenna that responded well at 1420 MHz. This antenna came out to have 16 elements and have the response below:![Antenna Pattern](/AntennaV1Data/AntennaPattern.PNG)
