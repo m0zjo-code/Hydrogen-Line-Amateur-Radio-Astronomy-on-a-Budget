@@ -1,4 +1,5 @@
 
+
 # Hydrogen Line Amateur Radio Astronomy on a Budget
 This is an overview of my H-line amateur radio astronomy experiments for others to see.
 
@@ -88,13 +89,71 @@ Two sets of measurements are taken for each observation
 
 It is important to note that both measurements use the same recording settings.
 
-## Processing tool (dark frame processing and antenna pointing assistance)
+## Processing tool (dark frame processing and antenna pointing assistance) 
+The python 3.x processing script "hlineprocess" is located in the Scripts folder of this repository.
+
+The following libraries are required:
+- matplotlib
+- numpy
+- scipy
+- astropy
+- healpy
+
+The following functions are provided:
+- Parse data files from rtl_power_fftw 
 - Antenna pointing assistance
 - Noise subtraction
-- Plot data on galactic plane (fits?)
+- Plot data locations on the galactic plane (using a 408 MHz allsky map kindly provided by the Jodrell Bank Centre for Astrophysics - http://www.jb.man.ac.uk/research/cosmos/haslam_map/)
+
+The processing script can be used as follows:
+``` bash
+hlineprocess.py -d <datafile> -n <noisefile> -l <fft_len> -p <el,az>
+```` 
+Where:
+- datafile = filepath of data file
+- noisefile = filepath of noise measurement
+- fft_len = fft_len used in rtl_power_fftw
+- el,az = elevation and azimuth of antenna (used for pointing calculations)
+
+For example:
+``` bash
+python3 hlineprocess.py -d ../21042019_Data/MeasD1Az315El70a_120k.dat -n ../21042019_Data/NoiseD150ohterm.dat  -l 1024 -p 70,315
+```` 
+
+The output methods can be controlled using the variables at the start of the file:
+```python
+# Data output settings
+plot = True # Plot corrected plot
+plot_noise = False # Plot noise and raw data
+export_fig = False # Export corrected data as a png file
+calc_doppler = False # Convert frequency to doppler shift
+calc_velocity = True # Convert doppler to velocity
+plot_allsky = True # Plot data points on allsky map when file parsing has completed
+```
+
+The location of the receive antenna must also be specified:
+```python
+# Rx location
+lat = 51.6
+lon = 0.3
+height = 100
+```
 
 ## Results
-A number of test recordings were made over a weekend. 
+A number of test recordings were made over a weekend and the results are shown below.
+
+A corrected H-Line response is shown below:
+![Example Hline Response](/docs/PlotExample_arm.png)
+
+An example raw data file plot is shown below along with the associated noise measurement. The H-Line response on the blue line can be seen but is dwarfed by the front end response of the SDR (orange line).
+![Example Raw Response](/docs/NoiseRaw.png)
+
+More example snapshot results:
+![Example H-Line Response](/21042019_Data/MeasD1Az282El45/MeasD1Az282El45-2.png)
+
+![Example H-Line Response](/21042019_Data/MeasD1Az312El77/MeasD1Az312El77.png)
+
+Unfortunately, not much data was recorded when the setup was available but enough was recorded to prove that the setup is functional.
 
 ## Next steps
 - Raspberry pi recorder

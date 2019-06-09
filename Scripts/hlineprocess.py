@@ -30,16 +30,16 @@ from astropy.coordinates import SkyCoord, EarthLocation
 from astropy import units as u
 
 # Data output settings
-plot = True
-plot_noise = False
-export_fig = False
-calc_doppler = False
-calc_velocity = True
-plot_allsky = False
+plot = True # Plot corrected plot
+plot_noise = False # Plot noise and raw data
+export_fig = False # Export corrected data as a png file
+calc_doppler = False # Convert frequency to doppler shift
+calc_velocity = True # Convert doppler to velocity
+plot_allsky = True # Plot data points on allsky map when file parsing has completed
 
 # Rx location
-lat = 51
-lon = 0.5
+lat = #
+lon = #
 height = 100
 
 # Constants
@@ -121,14 +121,15 @@ def plot_galatic_allsky(skycoordinate_list):
         urllib.request.urlretrieve(url, "haslam408_dsds_Remazeilles2014.fits")
     
     hpx = hp.read_map(filename)
-    hp.cartview(hpx, norm = "log", return_projected_map = False)
+    hp.cartview(hpx, title = "AllSky Plot", norm = "hist", return_projected_map = False, cbar = False)
     hp.projscatter(skycoordinate_list[:, 0], skycoordinate_list[:, 1], lonlat = True, color = 'red')
+    hp.graticule()
     plt.show()
     return
 
 def main(argv):
     # Load arguments
-    help_line = "hlineprocess.py -d <datafile> -n <noisefile> -l <fft_len> -p <az,el>"
+    help_line = "hlineprocess.py -d <datafile> -n <noisefile> -l <fft_len> -p <el,az>"
     try:
         opts, args = getopt.getopt(argv,"d:n:l:p:h",['data=', 'noise=', 'fftlen=', 'pointing=', 'help'])
     except getopt.GetoptError:
@@ -241,8 +242,12 @@ def main(argv):
         
         # Display noise data (corrected)
         if plot_noise:
-            plt.plot(block[:,0], block[:,1])
-            plt.plot(block[:,0], noise_vector*correction)
+            plt.title(plot_title)
+            plt.xlabel(xlabel)
+            plt.ylabel("Power Counts")
+            plt.plot(block[:,0], block[:,1], label="Raw Data Input")
+            plt.plot(block[:,0], noise_vector*correction, label="Matched Noise Correction")
+            plt.legend()
             plt.show()
         
         # Export figure to disk (PNG)
